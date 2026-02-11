@@ -1,2 +1,1 @@
-# ConnectXO-app
-Connect 4 and Tic-Tac-Toe (C++ Application)
+# Connect 4 and Tic-Tac-Toe (C++ Application)
