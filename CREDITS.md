@@ -3,12 +3,15 @@
 ## StartView icons
 
 - Classic theme original icons
+
 <img width="140" height="140" alt="Image" src="https://github.com/user-attachments/assets/2e4b5b56-6c69-4ddd-aa8b-f7bfcefff03b" />
 <img width="140" height="140" alt="Image" src="https://github.com/user-attachments/assets/3c8bcdd5-93d5-48d0-b4a2-1b85f32c8fcf" />
 
 [connect 4 (Flaticon)](https://www.flaticon.com/free-icon/connect-four_3367465) | [tic-tac-toe (Flaticon)](https://www.flaticon.com/free-icon/tic-tac-toe_806131)
 
+
 - Beachy, Dark, Strawberry, Nature theme icons (with recolor)
+
 <img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/ec952b4e-8461-482e-8522-da80170a98c3" /> 
 <img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/8296246c-2c24-4d34-b94c-af9aee2611b5" />
 <img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/b635d346-73fc-44ba-92d8-4b96a7504009" />
@@ -18,7 +21,7 @@
 Source image: [SVG Repo](https://www.svgrepo.com/svg/143264/tic-tac-toe-game) -> further edits (recoloring + background circle) done in Picsart  
 Nature theme log circle: Picsart sticker
 
-<img width="100" height="199" alt="Image" src="https://github.com/user-attachments/assets/c119ea97-bcdb-4bec-914b-643d87877a45" /> 
+<img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/c119ea97-bcdb-4bec-914b-643d87877a45" /> 
 <img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/e871efc6-8799-4573-abc8-17292dd8001b" />
 <img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/cf3e6ccd-25a4-4735-922a-668fc9a181f7" />
 <img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/dbd868cc-29f6-4e3a-8832-d0ce5ace7950" />
@@ -34,7 +37,7 @@ Nature theme log circle: Picsart sticker
 <img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/f102c929-0c76-4e05-a197-f92261df94c6" />
 <img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/801dd8a3-ce83-49a9-8a49-e20eca5e6e37" />
 <img width="100" height="100" alt="Image" src="https://github.com/user-attachments/assets/984e36f1-0a42-420c-a422-a727d70b3f15" /> <= 
-<img width="60" height="200" alt="Image" src="https://github.com/user-attachments/assets/a98acdbd-6cf7-47a8-8779-3a0d2de1c52a" />
+<img width="60" height="120" alt="Image" src="https://github.com/user-attachments/assets/a98acdbd-6cf7-47a8-8779-3a0d2de1c52a" />
 
 Source image: [freepnglogos](https://www.freepnglogos.com/images/x-png-42438.html) -> further edits (recoloring + background circle) done in Picsart  
 Nature theme log png used to make the X: [Rawpixel](https://www.rawpixel.com/image/16790595/png-log-tree-wood-log)
