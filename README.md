@@ -7,7 +7,7 @@ NOTE: This app uses ***NatID*** GUI. In order to run it through CMake, follow do
 ## Concept
 
 
-<img width="217" height="186" alt="Image" src="https://github.com/user-attachments/assets/bcf59c25-0499-45e1-a692-9e8f2a3e1238" />
-<img width="217" height="186" alt="Image" src="https://github.com/user-attachments/assets/5c11e4b8-4352-4091-84c1-526dabfec036" />
-<img width="217" height="186" alt="Image" src="https://github.com/user-attachments/assets/e6d3f630-7c5c-4bf3-a793-c27c92f8cd90" />
+<img width="237" height="196" alt="Image" src="https://github.com/user-attachments/assets/bcf59c25-0499-45e1-a692-9e8f2a3e1238" />
+<img width="237" height="196" alt="Image" src="https://github.com/user-attachments/assets/5c11e4b8-4352-4091-84c1-526dabfec036" />
+<img width="237" height="196" alt="Image" src="https://github.com/user-attachments/assets/e6d3f630-7c5c-4bf3-a793-c27c92f8cd90" />
 
