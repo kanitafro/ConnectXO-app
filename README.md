@@ -1,6 +1,6 @@
 # Connect 4 and Tic-Tac-Toe (C++ Application)
 
-NOTE: This app uses ***NatID*** GUI. In order to run it through CMake, follow download isntructions from [here](https://github.com/idzafic/natID). Alternatively, you can open the executable as an application.
+NOTE: This app uses ***NatID*** GUI. In order to run it through CMake, follow download instructions from [here](https://github.com/idzafic/natID). Alternatively, you can open the executable as an application.
 
 <img width="70" height="70" alt="Image" src="https://github.com/user-attachments/assets/0ff6ce80-88b7-4e11-b1cb-3d1a9cdbf3a9" />
 <img width="130" height="100" alt="Image" src="https://github.com/user-attachments/assets/6f2dc9a6-fc87-48a1-98d4-471031806bfa" />
