@@ -70,3 +70,6 @@ Entirely made in Picsart (themes in order: Classic, Beachy, Dark, Strawberry
 
 
 Nature tokens: [Vecteezy](https://www.vecteezy.com/png/52650621-wood-log-showing-unique-growth-rings) and [Pngtree](https://pngtree.com/freepng/tree-trunk-section_13380773.html)
+
+## Sounds
+Sound Effect by <a href="https://pixabay.com/users/ua_master_ie-43490695/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=210195">Denys Osypov</a> from <a href="https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=210195">Pixabay</a>
