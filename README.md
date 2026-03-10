@@ -75,6 +75,7 @@ Empirical Benchmarks (Mid-Game, Release Build):
 - Physics-Based UI: The Connect 4 token drop uses a time-based acceleration model (y=21​gt2) rather than linear movement for a more natural feel.
 - Event-Driven Audio: Low-latency .wav triggers are synchronized with specific game events (token impact, button clicks) using a centralized resource loader.
 - State Safety: The Settings menu utilizes event suppression and restart-warning accents to prevent re-entrant bugs during real-time theme or language switching.
+
 ***Hint System Architecture:**
 - Calls AIPlayer.chooseMove() at depth 8
 - Returns best move calculated by same minimax engine
