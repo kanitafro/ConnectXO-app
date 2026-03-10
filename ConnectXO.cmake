@@ -2,7 +2,6 @@ set(CONNECTXO_NAME ConnectXO)				#Naziv prvog projekta u solution-u
 
 file(GLOB CONNECTXO_SOURCES  ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp)
 file(GLOB CONNECTXO_INCS  ${CMAKE_CURRENT_LIST_DIR}/src/*.h)
-set(CONNECTXO_PLIST  ${CMAKE_CURRENT_LIST_DIR}/src/Info.plist)
 file(GLOB CONNECTXO_INC_TD  ${MY_INC}/td/*.h)
 file(GLOB CONNECTXO_INC_GUI ${MY_INC}/gui/*.h)
 
@@ -42,3 +41,4 @@ setAppIcon(${CONNECTXO_NAME} ${CMAKE_CURRENT_LIST_DIR})
 setIDEPropertiesForGUIExecutable(${CONNECTXO_NAME} ${CMAKE_CURRENT_LIST_DIR})
 
 setPlatformDLLPath(${CONNECTXO_NAME})
+
