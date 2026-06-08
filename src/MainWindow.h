@@ -26,6 +26,15 @@ class MainWindow : public gui::Window
             setCentralView(_view.get());
             open(); // show immediately
         }
+    /*protected:
+        bool shouldClose() override
+        {
+            // This window should be destroyed, but the app should not exit.
+            // Returning false prevents the default closing mechanism that might
+            // be terminating the application.
+            hide(true); // Hides and likely destroys the window.
+            return false;
+        }*/
     };
 protected:
     MenuBar _mainMenuBar;

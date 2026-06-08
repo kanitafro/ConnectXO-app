@@ -773,7 +773,7 @@ protected:
 				// Try to close/hide parent window if no callback provided
 				gui::Window* pWnd = getParentWindow();
 				if (pWnd)
-					pWnd->hide(true);
+					pWnd->hide(false);
 			}
 			reDraw();
 			return;
