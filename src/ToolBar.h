@@ -16,4 +16,3 @@ public:
         addItem(tr("settings"), &_settings, tr("settingsTT"), 10, 0, 0, 10);
     }
 };
-
