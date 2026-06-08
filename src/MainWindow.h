@@ -66,7 +66,7 @@ protected:
 
 
                 // Increase dialog size by 10% in both dimensions so _lblRestartInfo fits.
-                // Base size preserved (420x160), compute a 10% larger integer size.
+                // Base size preserved (420x180), compute a 10% larger integer size.
                 int baseW = 440;
                 int baseH = 180;
                 int dlgW = (baseW * 11) / 10; // 10% wider
