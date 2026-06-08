@@ -221,7 +221,7 @@ protected:
 			if (themeIdx == ThemeIndex::Nature)
 				_imgWood.load(":wood2");
 			else
-				_imgWood = gui::Image(); // clear/unload wood image for non-Nature themes
+				_imgWood.load(""); // clear/unload wood image for non-Nature themes
 
 			_lastTheme = themeIdx;
 			_imagesLoaded = true;
