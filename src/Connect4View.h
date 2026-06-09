@@ -24,6 +24,14 @@
 
 extern "C" int getThemeIndex();
 
+#ifndef CONNECTXO_UI_FONT
+#if defined(__APPLE__)
+#define CONNECTXO_UI_FONT "Helvetica Neue"
+#else
+#define CONNECTXO_UI_FONT "Segoe UI"
+#endif
+#endif
+
 
 // Connect4 view using natID GUI. Tokens are images ":bluetoken" and ":yellowtoken".
 class Connect4View : public gui::Canvas
@@ -64,7 +72,7 @@ public:
 		setPreferredFrameRateRange(60, 60);
 		enableResizeEvent(true);
 		_game.reset(Player::X); // player X goes first (human)
-		
+
 		// Load persisted scores from ScoreManager
 		_winCounter = ScoreManager::getInstance().getC4Stats().wins;
 		_lossCounter = ScoreManager::getInstance().getC4Stats().losses;
@@ -254,7 +262,7 @@ protected:
 
 		// Draw centered "connectFour" title
 		gui::Font titleFont;
-		titleFont.create("Segoe UI", 37.0f, gui::Font::Style::Bold, gui::Font::Unit::Point);
+		titleFont.create(CONNECTXO_UI_FONT, 37.0f, gui::Font::Style::Bold, gui::Font::Unit::Point);
 		td::String titleText = tr("connectFour");
 		gui::DrawableString::draw(titleText, titleRect, &titleFont, textLblColor, td::TextAlignment::Center, td::VAlignment::Center);
 
@@ -334,7 +342,7 @@ protected:
 			const float pi = 3.1415926f;
 			pulseScale = 1.0f + 0.08f * std::sin(elapsedWin * 8.0f);
 		}
-		
+
 		for (int r = 0; r < rows; ++r)
 		{
 			for (int c = 0; c < cols; ++c)
@@ -342,7 +350,7 @@ protected:
 				Player p = _game.getCell(r, c);
 				if (p == Player::None)
 					continue;
-				
+
 				// Check if this token is part of winning line
 				float tokenScale = 1.0f;
 				if (!winningLine.empty())
@@ -355,7 +363,7 @@ protected:
 				}
 				drawToken(getTokenRectForCell(r, c), p, false, highlightCOL, tokenScale);
 			}
-		} 
+		}
 
 		// Draw hover preview at landing cell with fade effect
 		if (shouldDrawHover())
@@ -384,22 +392,22 @@ protected:
 					double t = _boardTop + (rows - 1 - hintRow) * cell;
 					double rgt = l + cell;
 					double b = t + cell;
-					
+
 					// Bright yellow for visibility
 					td::ColorID hintColor = td::ColorID::Yellow;
-					
+
 					// Moderate pulse: 1.0 + 0.15 * sin(elapsed * 7)
 					const float pi = 3.1415926f;
 					float pulseScale = 1.0f + 0.15f * std::sin(hintElapsed * 7.0f * pi);
-					
+
 					// Draw circular glow (oval shape) - more visible
 					double centerX = (l + rgt) * 0.5;
 					double centerY = (t + b) * 0.5;
 					double radius = (rgt - l) * 0.45 * pulseScale;
-					
+
 					gui::Rect glowRect(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
 					float glowStrokeWidth = 4.0f;  // Balanced stroke for visibility
-					
+
 					gui::Shape shGlow;
 					shGlow.createOval(glowRect, glowStrokeWidth);
 					shGlow.drawWire(hintColor, glowStrokeWidth);
@@ -487,7 +495,7 @@ protected:
 		float quitBorder = 3.0f;
 		float replayBorder = 3.0f;
 		float hintBorder = hintEnabled ? 2.0f : 1.0f;
-		
+
 		// Enhance colors on hover
 		if (_quitBtnHovered)
 		{
@@ -504,7 +512,7 @@ protected:
 			replayFillColor = td::ColorID::LightGray; // lighter on hover
 			replayBorder = 5.0f; // thicker border
 		}
-		
+
 		shQuit.drawFillAndWire(quitFillColor, bgColor, quitBorder);
 		if (hintFeatureEnabled)
 		{
@@ -515,7 +523,7 @@ protected:
 		// Draw button labels
 		gui::Font btnFont;
 		float btnFontSize = std::max(1.0f, static_cast<float>(rectH * 0.28));
-		btnFont.create("Segoe UI", btnFontSize, gui::Font::Style::BoldItalic, gui::Font::Unit::Point);
+		btnFont.create(CONNECTXO_UI_FONT, btnFontSize, gui::Font::Style::BoldItalic, gui::Font::Unit::Point);
 		td::String quitLbl = tr("quitBtn");
 		td::String hintLbl = tr("Hint");
 		td::String replayLbl = tr("replayBtn");
@@ -566,7 +574,7 @@ protected:
 		td::String winText = sbW.toString();
 		gui::Font counterFont;
 		float counterFontSize = std::max(1.0f, static_cast<float>(row3Height * 0.25));
-		counterFont.create("Segoe UI", counterFontSize, gui::Font::Style::Bold, gui::Font::Unit::Point);
+		counterFont.create(CONNECTXO_UI_FONT, counterFontSize, gui::Font::Style::Bold, gui::Font::Unit::Point);
 		gui::DrawableString::draw(winText, winCounterRect, &counterFont, textLblColor, td::TextAlignment::Left, td::VAlignment::Center);
 
 		// ROW 3, COLUMN 3: Loss Counter
@@ -644,7 +652,7 @@ protected:
 
 			gui::Font overlayFont;
 			float overlayFontSize = std::max(6.0f, static_cast<float>(row3Height * 0.35));
-			overlayFont.create("Segoe UI", overlayFontSize, gui::Font::Style::BoldItalic, gui::Font::Unit::Point);
+			overlayFont.create(CONNECTXO_UI_FONT, overlayFontSize, gui::Font::Style::BoldItalic, gui::Font::Unit::Point);
 			gui::DrawableString::draw(overlayLbl, overlayRect, &overlayFont, overlayTxtColor, td::TextAlignment::Center, td::VAlignment::Center);
 		}
 
@@ -658,35 +666,35 @@ protected:
 	void onCursorMoved(const gui::InputDevice& inputDevice) override
 	{
 		const gui::Point& pt = inputDevice.getModelPoint();
-		
+
 		// Helper to test point in rect
 		auto pointInRect = [](const gui::Rect& r, const gui::Point& p) {
 			return (p.x >= r.left) && (p.x <= r.right) && (p.y >= r.top) && (p.y <= r.bottom);
-		};
-		
+			};
+
 		// Check button hover states
 		bool wasQuitHovered = _quitBtnHovered;
 		bool wasReplayHovered = _replayBtnHovered;
 		bool wasHintHovered = _hintBtnHovered;
-		
+
 		_quitBtnHovered = pointInRect(_quitBtn, pt);
 		_replayBtnHovered = pointInRect(_replayBtn, pt);
 		const bool hintEnabled = isHintEnabled();
 		_hintBtnHovered = hintEnabled && pointInRect(_hintBtn, pt);
-		
+
 		// Redraw if button hover state changed
 		if (_quitBtnHovered != wasQuitHovered || _replayBtnHovered != wasReplayHovered || _hintBtnHovered != wasHintHovered)
 		{
 			reDraw();
 		}
-		
+
 		// Early exit if hovering over buttons (don't update board hover)
 		if (_quitBtnHovered || _replayBtnHovered || _hintBtnHovered)
 		{
 			clearHover();
 			return;
 		}
-		
+
 		if (_cellSize <= 0)
 			return;
 		if (_game.isGameOver() || _aiMoveScheduled || _isFalling)
@@ -773,7 +781,7 @@ protected:
 				// Try to close/hide parent window if no callback provided
 				gui::Window* pWnd = getParentWindow();
 				if (pWnd)
-					pWnd->hide(false);
+					pWnd->hide(true);
 			}
 			reDraw();
 			return;
@@ -894,7 +902,7 @@ private:
 	void drawToken(const gui::Rect& pieceRect, Player p, bool dimmed, td::ColorID hoverOutline, float scale = 1.0f, float alpha = 1.0f)
 	{
 		gui::Rect drawRect = pieceRect;
-		
+
 		// Apply scale from center
 		if (scale != 1.0f && scale > 0.0f)
 		{
@@ -904,7 +912,7 @@ private:
 			const double halfH = (pieceRect.bottom - pieceRect.top) * 0.5 * scale;
 			drawRect = gui::Rect(centerX - halfW, centerY - halfH, centerX + halfW, centerY + halfH);
 		}
-		
+
 		if (dimmed)
 		{
 			const double inset = _cellSize * 0.05;
@@ -999,8 +1007,8 @@ private:
 		{
 			const float distance = std::max(1.0f, _fallingToken.targetY - _fallingToken.startY);
 			const float base = static_cast<float>(_cellSize) * 10.0f;
-		_fallingToken.dropDuration = std::clamp(distance / base, 0.24f, 0.48f);
-		_fallingToken.bounceDuration = 0.18f;
+			_fallingToken.dropDuration = std::clamp(distance / base, 0.24f, 0.48f);
+			_fallingToken.bounceDuration = 0.18f;
 		}
 		_isFalling = true;
 		startAnimation();
@@ -1062,7 +1070,7 @@ private:
 	{
 		_isFalling = false;
 		stopAnimation();
-		
+
 		// Sound already played in animate() when token settled
 		_game.makeMove(_fallingToken.column);
 
@@ -1173,13 +1181,13 @@ private:
 	bool _isHintActive = false;
 	int _hintCol = -1;
 	std::chrono::steady_clock::time_point _hintStartTime;
-	
+
 	// Hover fade animation
 	float _hoverFadeTime = 0.0f;
-	
+
 	// Win pulse animation
 	std::chrono::steady_clock::time_point _winPulseStartTime;
-	
+
 	// Hint button
 	gui::Rect _hintBtn;
 	bool _hintBtnHovered = false;

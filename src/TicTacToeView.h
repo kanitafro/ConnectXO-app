@@ -26,6 +26,14 @@
 
 extern "C" int getThemeIndex();
 
+#ifndef CONNECTXO_UI_FONT
+#if defined(__APPLE__)
+#define CONNECTXO_UI_FONT "Helvetica Neue"
+#else
+#define CONNECTXO_UI_FONT "Segoe UI"
+#endif
+#endif
+
 // Tic-Tac-Toe view with integrated game-over display
 class TicTacToeView : public gui::Canvas
 {
@@ -57,11 +65,13 @@ public:
         , _hintStartTime(std::chrono::steady_clock::now())
         , _hoverFadeTime(0.0f)
         , _winPulseStartTime(std::chrono::steady_clock::now())
+        , _quitBtnHovered(false)
+        , _replayBtnHovered(false)
         , _hintBtnHovered(false)
     {
         enableResizeEvent(true);
         _game.reset(Player::X);
-        
+
         // Load persisted scores from ScoreManager
         _winCounter = ScoreManager::getInstance().getTTTStats().wins;
         _lossCounter = ScoreManager::getInstance().getTTTStats().losses;
@@ -83,25 +93,29 @@ protected:
         if (_cellSize <= 0) return;
 
         const gui::Point& pt = inputDevice.getModelPoint();
-        
+
         // Helper to test point in rect
         auto pointInRect = [](const gui::Rect& r, const gui::Point& p) {
             return (p.x >= r.left) && (p.x <= r.right) && (p.y >= r.top) && (p.y <= r.bottom);
-        };
-        
+            };
+
+        bool wasQuitHovered = _quitBtnHovered;
+        bool wasReplayHovered = _replayBtnHovered;
         bool wasHintHovered = _hintBtnHovered;
         const bool hintEnabled = isHintEnabled();
-		
+
+        _quitBtnHovered = pointInRect(_quitBtn, pt);
+        _replayBtnHovered = pointInRect(_replayBtn, pt);
         _hintBtnHovered = hintEnabled && pointInRect(_hintBtn, pt);
-        
+
         // Redraw if button hover state changed
-        if (_hintBtnHovered != wasHintHovered)
+        if (_quitBtnHovered != wasQuitHovered || _replayBtnHovered != wasReplayHovered || _hintBtnHovered != wasHintHovered)
         {
             reDraw();
         }
-        
-        // Early exit if hovering over hint button
-        if (_hintBtnHovered)
+
+        // Early exit if hovering over buttons
+        if (_quitBtnHovered || _replayBtnHovered || _hintBtnHovered)
         {
             if (_hoverRow != -1 || _hoverCol != -1)
             {
@@ -111,7 +125,7 @@ protected:
             }
             return;
         }
-        
+
         int col = static_cast<int>((pt.x - _boardLeft) / _cellSize);
         int row = static_cast<int>((pt.y - _boardTop) / _cellSize);
 
@@ -119,7 +133,7 @@ protected:
         if (row >= 0 && row < 3 && col >= 0 && col < 3)
         {
             int moveIndex = row * 3 + col;
-            if (_game.getCell(moveIndex) == Player::None && !_game.isGameOver() && 
+            if (_game.getCell(moveIndex) == Player::None && !_game.isGameOver() &&
                 _game.getCurrentPlayer() == _humanPlayer && !_aiMoveScheduled)
             {
                 if (_hoverRow != row || _hoverCol != col)
@@ -186,6 +200,8 @@ protected:
         ThemeIndex themeIdx = clampThemeIndex(getThemeIndex());
 
         // Define colors
+        td::ColorID lineColor;
+
         td::ColorID bgColor = td::ColorID::White; // THIS COLOR CHANGES WITH THEMES
         td::ColorID accentColor = td::ColorID::Blue; // THIS COLOR CHANGES WITH THEMES
         td::ColorID secondaryColor = td::ColorID::Black; // THIS COLOR CHANGES WITH THEMES
@@ -311,7 +327,7 @@ protected:
         {
             td::String title = tr("ticTacToe");
             gui::Font titleFont;
-            titleFont.create("Segoe UI", 37.0f, gui::Font::Style::Bold, gui::Font::Unit::Point);
+            titleFont.create(CONNECTXO_UI_FONT, 37.0f, gui::Font::Style::Bold, gui::Font::Unit::Point);
             const double hPad = rect.width() * 0.02;
             gui::Rect titleRect(rect.left + hPad, row0Top, rect.right - hPad, row0Bottom);
             gui::DrawableString::draw(title, titleRect, &titleFont, textLblColor, td::TextAlignment::Center, td::VAlignment::Center);
@@ -371,7 +387,7 @@ protected:
             const float pi = 3.1415926f;
             pulseScale = 1.0f + 0.08f * std::sin(elapsedWin * 8.0f);
         }
-        
+
         for (int r = 0; r < 3; ++r)
         {
             for (int c = 0; c < 3; ++c)
@@ -402,7 +418,7 @@ protected:
         }
 
         // Draw hover preview with fade effect
-        if (_hoverRow >= 0 && _hoverCol >= 0 && !_game.isGameOver() && 
+        if (_hoverRow >= 0 && _hoverCol >= 0 && !_game.isGameOver() &&
             _game.getCurrentPlayer() == _humanPlayer && !_aiMoveScheduled)
         {
             double cx = _boardLeft + (_hoverCol + 0.5) * cell;
@@ -477,9 +493,9 @@ protected:
             gui::Rect bottomRect(cx, bottomTop, cx + rectW, bottomTop + rectH);
 
             // store for click handling
-            _rightTopRect = topRect;
+            _quitBtn = topRect;
             _hintBtn = hintRect;
-            _rightBottomRect = bottomRect;
+            _replayBtn = bottomRect;
 
             gui::Shape shTop;
             gui::Shape shHint;
@@ -494,23 +510,37 @@ protected:
             const bool hintFeatureEnabled = isHintFeatureEnabled();
             const bool hintEnabled = isHintEnabled();
             td::ColorID hintFillColor = hintEnabled ? td::ColorID::Gold : td::ColorID::Gainsboro;
+            float quitBorder = 3.0f;
+            float replayBorder = 3.0f;
             float hintBorder = hintEnabled ? 2.0f : 1.0f;
+
+            // Enhance colors on hover
+            if (_quitBtnHovered)
+            {
+                quitBtnColor = td::ColorID::LightBlue; // lighter on hover
+                quitBorder = 5.0f; // thicker border
+            }
             if (hintEnabled && _hintBtnHovered)
             {
                 hintFillColor = td::ColorID::Yellow;
                 hintBorder = 3.0f;
             }
+            if (_replayBtnHovered)
+            {
+                replayBtnColor = td::ColorID::LightGray; // lighter on hover
+                replayBorder = 5.0f; // thicker border
+            }
 
-            shTop.drawFillAndWire(quitBtnColor, bgColor, 3.0f);
+            shTop.drawFillAndWire(quitBtnColor, bgColor, quitBorder);
             if (hintFeatureEnabled)
             {
                 shHint.drawFillAndWire(hintFillColor, bgColor, hintBorder);
             }
-            shBottom.drawFillAndWire(replayBtnColor, bgColor, 3.0f);
+            shBottom.drawFillAndWire(replayBtnColor, bgColor, replayBorder);
 
             gui::Font btnFont;
             float btnFontSize = std::max(1.0f, static_cast<float>(rectH * 0.28));
-            btnFont.create("Segoe UI", btnFontSize, gui::Font::Style::BoldItalic, gui::Font::Unit::Point);
+            btnFont.create(CONNECTXO_UI_FONT, btnFontSize, gui::Font::Style::BoldItalic, gui::Font::Unit::Point);
             td::String quitLbl = tr("quitBtn");
             td::String hintLbl = tr("Hint");
             td::String replayLbl = tr("replayBtn");
@@ -565,7 +595,7 @@ protected:
         const double hPad = std::max(rect.width() * 0.02, colW * 0.06); // horizontal padding
         float fontSizePt = std::max(1.0f, static_cast<float>(row2H * 0.25));
         gui::Font counterFont;
-        counterFont.create("Segoe UI", fontSizePt, gui::Font::Style::Bold, gui::Font::Unit::Point);
+        counterFont.create(CONNECTXO_UI_FONT, fontSizePt, gui::Font::Style::Bold, gui::Font::Unit::Point);
 
         gui::Rect bottomCol0(rect.left + hPad, row2Top, rect.left + colW - hPad, row2Bottom);
         gui::DrawableString::draw(winsStr, bottomCol0, &counterFont, textLblColor, td::TextAlignment::Left, td::VAlignment::Center);
@@ -582,7 +612,7 @@ protected:
             {
                 const double cellSz = _cellSize;
                 const float winStroke = std::max(3.0f, static_cast<float>(cellSz * 0.15));
-                td::ColorID lineColor;
+                //td::ColorID lineColor;
 
                 if (_game.getWinner() == _humanPlayer)
                     lineColor = winLine;
@@ -643,7 +673,7 @@ protected:
 
             gui::Font overlayFont;
 
-            overlayFont.create("Segoe UI", overlayFontSize, gui::Font::Style::BoldItalic, gui::Font::Unit::Point);
+            overlayFont.create(CONNECTXO_UI_FONT, overlayFontSize, gui::Font::Style::BoldItalic, gui::Font::Unit::Point);
             gui::DrawableString::draw(lbl, overlay, &overlayFont, overlayTxtColor, td::TextAlignment::Center, td::VAlignment::Center);
         }
 
@@ -664,7 +694,7 @@ protected:
             };
 
         // Check placeholder buttons first
-        if (pointInRect(_rightTopRect, pt))
+        if (pointInRect(_quitBtn, pt))
         {
             // Quit: reset counters and notify parent
             _winCounter = 0;
@@ -684,13 +714,13 @@ protected:
                 // Try to close/hide parent window if no callback provided
                 gui::Window* pWnd = getParentWindow();
                 if (pWnd)
-                    pWnd->hide(false);
+                    pWnd->hide(true);
             }
             reDraw();
             return;
         }
 
-        if (pointInRect(_rightBottomRect, pt))
+        if (pointInRect(_replayBtn, pt))
         {
             // Replay: remember counters, reset game board
             ++_aiGen; // invalidate pending AI
@@ -745,7 +775,7 @@ protected:
         {
             if (isHintEnabled())
             {
-                Game::Move bestMove = _aiPlayer.chooseMove(_game, 12);
+                int bestMove = calculateOptimalHint();
                 if (bestMove >= 0 && bestMove < 9)
                 {
                     _hintCell = bestMove;
@@ -757,50 +787,76 @@ protected:
             return;
         }
 
-        if (_game.isGameOver() || _game.getCurrentPlayer() != _humanPlayer || _aiMoveScheduled)
-            return;
+        // Otherwise, handle board click (only if game is not over and it's human's turn)
+        if (_game.isGameOver() || _aiMoveScheduled) return;
+        if (_game.getCurrentPlayer() != _humanPlayer) return; // human's turn
 
         int col = static_cast<int>((pt.x - _boardLeft) / _cellSize);
         int row = static_cast<int>((pt.y - _boardTop) / _cellSize);
 
-        if (row < 0 || row >2 || col < 0 || col >2) return;
+        if (row < 0 || row >= 3 || col < 0 || col >= 3) return;
 
         int moveIndex = row * 3 + col;
+        if (_game.getCell(moveIndex) != Player::None) return;
 
-        if (!_game.makeMove(moveIndex)) return;
-
-        // Play click sound immediately when move is validated
+        _game.makeMove(moveIndex);
         _clickSound.play();
 
-        // Clear hover after making move
+        // Clear hover after making a move
         _hoverRow = -1;
         _hoverCol = -1;
 
-        reDraw(); // Redraw board after player move immediately
+        //reDraw(); // Redraw board after player move immediately
 
-        if (_game.isGameOver()) return;
+        if (_game.isGameOver() && !_countersUpdated)
+        {
+            Player winner = _game.getWinner();
+            if (winner == _humanPlayer)
+            {
+                ++_winCounter;
+                ++ScoreManager::getInstance().getTTTStats().wins;
+                ScoreManager::getInstance().saveTTTStats();
+            }
+            else if (winner == _AIrole)
+            {
+                ++_lossCounter;
+                ++ScoreManager::getInstance().getTTTStats().losses;
+                ScoreManager::getInstance().saveTTTStats();
+            }
+            _countersUpdated = true;
+        }
 
-        // Schedule AI move on a background thread with delay
+        reDraw();
+        if (_game.isGameOver())
+        {
+            _aiMoveScheduled = false;
+            return;
+        }
+
+        // Schedule AI move after a short delay
+        scheduleAIMove();
+    }
+
+private:
+    void scheduleAIMove()
+    {
         _aiMoveScheduled = true;
         int gen = ++_aiGen;
         std::thread aiThread([this, gen]() {
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-            // Compute AI move on background thread
-            Game::Move aiMove = _aiPlayer.chooseMove(_game, 12);
-
-            // Schedule GUI update on main thread
+            std::this_thread::sleep_for(std::chrono::milliseconds(400));
+            Game::Move aiMove = _aiPlayer.chooseMove(_game, 10);
             auto* fn = new gui::AsyncFn([this, aiMove, gen]() {
-                // apply only if generation matches (no intervening reset/quit)
-                if (gen == _aiGen)
+                if (gen != _aiGen)
                 {
-                    if (!_game.isGameOver() && aiMove >= 0)
-                    {
-                        _game.makeMove(aiMove);
-                        reDraw();
-                    }
+                    _aiMoveScheduled = false;
+                    return;
+                }
+                if (!_game.isGameOver() && aiMove >= 0)
+                {
+                    _game.makeMove(aiMove);
                 }
                 _aiMoveScheduled = false;
+                reDraw();
                 });
             gui::NatObject::asyncCall(fn, true);
             });
@@ -820,8 +876,23 @@ protected:
 
     bool isHintEnabled() const
     {
-        return isHintFeatureEnabled() && !_game.isGameOver() && !_aiMoveScheduled && _game.getCurrentPlayer() == _humanPlayer;
+        return isHintFeatureEnabled() && !_game.isGameOver() && _game.getCurrentPlayer() == _humanPlayer && !_aiMoveScheduled;
     }
+
+    // Calculate optimal hint move using AI's minimax evaluation
+    int calculateOptimalHint()
+    {
+        // Simply use the AI player's own best move calculation
+        // from the human player's perspective
+        const auto validMoves = _game.getValidMoves();
+        if (validMoves.empty())
+            return -1;
+
+        // Use AI engine to evaluate - it will find the best move
+        // using minimax with alpha-beta pruning at depth 8
+        return _aiPlayer.chooseMove(_game, 8);
+    }
+
 
 private:
     TicTacToe _game;
@@ -837,9 +908,10 @@ private:
     int _lossCounter;
     bool _countersUpdated;
 
-    // Right column placeholders rects for click detection
-    gui::Rect _rightTopRect;
-    gui::Rect _rightBottomRect;
+    // Button rects for click detection
+    gui::Rect _quitBtn;
+    gui::Rect _replayBtn;
+    gui::Rect _hintBtn;
 
     // Callbacks parent can set to handle close/replay actions
     std::function<void()> _onQuit;
@@ -864,15 +936,16 @@ private:
     bool _isHintActive = false;
     int _hintCell = -1;
     std::chrono::steady_clock::time_point _hintStartTime;
-    
+
     // Hover fade animation
     float _hoverFadeTime = 0.0f;
-    
+
     // Win pulse animation
     std::chrono::steady_clock::time_point _winPulseStartTime;
-    
-    // Hint button
-    gui::Rect _hintBtn;
-    bool _hintBtnHovered = false;
+
+    // Button hover states
+    bool _quitBtnHovered;
+    bool _replayBtnHovered;
+    bool _hintBtnHovered;
 
 };
