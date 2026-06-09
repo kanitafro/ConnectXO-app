@@ -111,6 +111,169 @@ extern "C" int getThemeIndex()
 	return to_int(g_themeIndex);
 }
 
+int evaluateHeuristic(const Game& state, Player aiPlayer)
+{
+	if (auto c4 = dynamic_cast<const ConnectFour*>(&state))
+	{
+		int score = 0;
+		Player opponent = (aiPlayer == Player::X) ? Player::O : Player::X;
+
+		// Scan for threats and opportunities (sequences of 2 and 3)
+		for (int row = 0; row < ConnectFour::HEIGHT; ++row)
+		{
+			for (int col = 0; col < ConnectFour::WIDTH; ++col)
+			{
+				Player p = c4->getCell(row, col);
+				if (p == Player::None) continue;
+
+				// Horizontal sequences
+				if (col + 2 < ConnectFour::WIDTH)
+				{
+					Player p1 = c4->getCell(row, col + 1);
+					Player p2 = c4->getCell(row, col + 2);
+					
+					// 3-in-a-row: critical threat
+					if (p == p1 && p1 == p2)
+					{
+						if (p == aiPlayer)
+							score += 50;   // AI winning opportunity
+						else
+							score -= 50;   // Opponent threat
+					}
+					// 2-in-a-row
+					else if (p == p1 && p2 == Player::None)
+					{
+						if (p == aiPlayer)
+							score += 10;
+						else
+							score -= 10;
+					}
+				}
+
+				// Vertical sequences
+				if (row + 2 < ConnectFour::HEIGHT)
+				{
+					Player p1 = c4->getCell(row + 1, col);
+					Player p2 = c4->getCell(row + 2, col);
+					
+					if (p == p1 && p1 == p2)
+					{
+						if (p == aiPlayer)
+							score += 50;
+						else
+							score -= 50;
+					}
+					else if (p == p1 && p2 == Player::None)
+					{
+						if (p == aiPlayer)
+							score += 10;
+						else
+							score -= 10;
+					}
+				}
+
+				// Diagonal (down-right)
+				if (col + 2 < ConnectFour::WIDTH && row + 2 < ConnectFour::HEIGHT)
+				{
+					Player p1 = c4->getCell(row + 1, col + 1);
+					Player p2 = c4->getCell(row + 2, col + 2);
+					
+					if (p == p1 && p1 == p2)
+					{
+						if (p == aiPlayer)
+							score += 50;
+						else
+							score -= 50;
+					}
+					else if (p == p1 && p2 == Player::None)
+					{
+						if (p == aiPlayer)
+							score += 10;
+						else
+							score -= 10;
+					}
+				}
+
+				// Diagonal (down-left)
+				if (col - 2 >= 0 && row + 2 < ConnectFour::HEIGHT)
+				{
+					Player p1 = c4->getCell(row + 1, col - 1);
+					Player p2 = c4->getCell(row + 2, col - 2);
+					
+					if (p == p1 && p1 == p2)
+					{
+						if (p == aiPlayer)
+							score += 50;
+						else
+							score -= 50;
+					}
+					else if (p == p1 && p2 == Player::None)
+					{
+						if (p == aiPlayer)
+							score += 10;
+						else
+							score -= 10;
+					}
+				}
+			}
+		}
+
+		// Bonus for center positions (helps with strategy when no threats exist)
+		for (int row = 0; row < ConnectFour::HEIGHT; ++row)
+		{
+			Player p = c4->getCell(row, 3);
+			if (p == aiPlayer)
+				score += 2;
+			else if (p == opponent)
+				score -= 2;
+		}
+
+		return score;
+	}
+
+	if (auto ttt = dynamic_cast<const TicTacToe*>(&state))
+	{
+		int score = 0;
+		Player opponent = (aiPlayer == Player::X) ? Player::O : Player::X;
+
+		// Check for 2-in-a-row threats
+		const int winningLines[8][3] = {
+			{0, 1, 2}, {3, 4, 5}, {6, 7, 8},
+			{0, 3, 6}, {1, 4, 7}, {2, 5, 8},
+			{0, 4, 8}, {2, 4, 6}
+		};
+
+		for (const auto& line : winningLines)
+		{
+			int aiCount = 0, oppCount = 0;
+			for (int pos : line)
+			{
+				if (ttt->getCell(pos) == aiPlayer) aiCount++;
+				else if (ttt->getCell(pos) == opponent) oppCount++;
+			}
+
+			if (aiCount == 2 && oppCount == 0)
+				score += 50;  // AI can win
+			else if (oppCount == 2 && aiCount == 0)
+				score -= 50;  // Must block opponent
+			else if (aiCount == 1 && oppCount == 0)
+				score += 5;
+			else if (oppCount == 1 && aiCount == 0)
+				score -= 5;
+		}
+
+		// Center position bonus for Tic Tac Toe
+		if (ttt->getCell(4) == aiPlayer)
+			score += 3;
+		else if (ttt->getCell(4) == opponent)
+			score -= 3;
+
+		return score;
+	}
+
+	return 0;
+}
+
 int evaluateTerminal(const Game& state, Player aiPlayer, int depthRemaining)
 {
 	const Player winner = state.getWinner();
@@ -120,7 +283,9 @@ int evaluateTerminal(const Game& state, Player aiPlayer, int depthRemaining)
 		return -1000 - depthRemaining; // prefer slower losses
 	if (state.isDraw())
 		return 0;
-	return 0;
+	
+	// If game is not over, use heuristic evaluation
+	return evaluateHeuristic(state, aiPlayer);
 }
 
 int minimax(std::unique_ptr<Game> node, int depth, bool maximizing, int alpha, int beta, Player aiPlayer)
