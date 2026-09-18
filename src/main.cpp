@@ -17,9 +17,26 @@ int main(int argc, const char * argv[])
 
     // Load persisted theme and apply it before initializing views
     int themeIdx = appProperties->getValue("theme", to_int(ThemeIndex::Classic)); // default to Classic
-    setThemeIndex(themeIdx);
-    mu::dbgLog("INFO: Theme loaded: %d", themeIdx);
+    try
+    {
+        setThemeIndex(themeIdx);
+        mu::dbgLog("INFO: Theme loaded: %d", themeIdx);
+    }
+    catch (...)
+    {
+        mu::dbgLog("WARNING: setThemeIndex failed, continuing with default theme");
+    }
 
-    app.init(trLang);
+    try
+    {
+        app.init(trLang);
+    }
+    catch (...)
+    {
+        mu::dbgLog("ERROR: app.init() threw exception");
+        return -1;
+    }
+
     return app.run();
 }
+

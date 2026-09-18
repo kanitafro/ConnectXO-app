@@ -1,5 +1,5 @@
 <?xml version='1.0'?>
-<DevRes>
+<Resources>
 	<Images>
 		<Res id="settings" path = "Common/Icons/SettingsBlue48.png"/>
 		<Res id="backarrow" path = ":images/back.png"/>
@@ -7,7 +7,7 @@
 		<Res id="redX" path = ":images/red_X.png"/>
 		<Res id="blueO" path = ":images/blue_O.png"/>
 		<Res id="redtoken" path = ":images/red_token.png"/>
-	<Res id="yellowtoken" path = ":images/yellow_token.png"/>
+		<Res id="yellowtoken" path = ":images/yellow_token.png"/>
 		<Res id="tictactoeIcon" path=":images/tic_tac_toe.png"/>
 		<Res id="connect4Icon" path=":images/connect4.png"/>
 		
@@ -46,4 +46,5 @@
 		<Res id="falling" path=":sounds/falling.wav"/>
 		<Res id="click" path=":sounds/click.wav"/>
 	</Sounds>
-</DevRes>
+</Resources>
+

@@ -31,6 +31,16 @@
 	<key>NSSupportsSuddenTermination</key>
 	<true/>
 	<key>CFBundleIconFile</key>
-    <string>macApp.icns</string>
+	<string>macApp.icns</string>
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>macApp</string>
+			</array>
+		</dict>
+	</dict>
 </dict>
 </plist>

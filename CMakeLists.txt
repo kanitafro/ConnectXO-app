@@ -1,49 +1,43 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.18)
 
-set(SOLUTION_NAME ConnectXO)
+set(SOLUTION_NAME ConnectXO)	#Unijeti naziv solution-a
 
+#BEGIN dio koji ide u sve solutions
 project(${SOLUTION_NAME})
-
-# ==============================================================================
-# CONTINUATION OF SOLUTIONS & ENVIRONMENT SETUP
-# ==============================================================================
 set(SOURCE_ROOT ${CMAKE_CURRENT_LIST_DIR})
+set(HOME_ROOT $ENV{HOME})
 if (WIN32)
-	set(HOME_ROOT $ENV{USERPROFILE})
 	string(REPLACE "\\" "/" HOME_ROOT "${HOME_ROOT}")
-else()
-	set(HOME_ROOT $ENV{HOME})
 endif()
 set(NATID_SDK_ROOT ${HOME_ROOT}/natID.SDK)
-
 include(${NATID_SDK_ROOT}/DevEnv/Common.cmake) 
-include(${NATID_SDK_ROOT}/DevEnv/MatrixLib.cmake)
+#END dio koji ide u sve solutions
+
 include(${NATID_SDK_ROOT}/DevEnv/natGUI.cmake)
 
 # ==============================================================================
-# PACKAGING LOGIC (Placed safely before the local project builds)
+# macOS-specific settings (Windows build unaffected)
 # ==============================================================================
-set(CPACK_PACKAGE_NAME "ConnectXO")
-set(CPACK_PACKAGE_VENDOR "Kanitafro")
-set(CPACK_PACKAGE_VERSION "1.0.0")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "ConnectXO Desktop Application")
+if(APPLE)
+	# Set minimum macOS version for compatibility
+	set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum macOS version" FORCE)
 
-if(WIN32)
-    set(CPACK_GENERATOR "INNOSETUP")
-    set(CPACK_PACKAGE_INSTALL_DIRECTORY "ConnectXO")
-    set(CPACK_INNOSETUP_CREATE_DESKTOP_ICON ON)
+	# Enable code signing support (optional, user configurable)
+	# Users can enable via: cmake -DENABLE_CODE_SIGNING=ON ..
+	option(ENABLE_CODE_SIGNING "Enable macOS code signing" OFF)
 
-    # Force BOTH variable hooks so CPack cannot fail its initialization phase
-    set(CPACK_INNOSETUP_COMPILER "C:/Users/Korisnik/AppData/Local/Programs/Inno Setup 6/ISCC.exe" CACHE FILEPATH "Path to Inno Setup compiler" FORCE)
-    set(CPACK_INNOSETUP_EXECUTABLE "C:/Users/Korisnik/AppData/Local/Programs/Inno Setup 6/ISCC.exe" CACHE FILEPATH "Path to Inno Setup executable" FORCE)
-elseif(APPLE)
-    set(CPACK_GENERATOR "DragNDrop")
-    set(CPACK_DMG_VOLUME_NAME "ConnectXO Installer")
+	if(ENABLE_CODE_SIGNING)
+		message(STATUS "macOS Code Signing: ENABLED")
+		message(STATUS "Note: Set team ID via: -DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=YOUR_TEAM_ID")
+	else()
+		message(STATUS "macOS Code Signing: DISABLED (optional for testing)")
+	endif()
 endif()
 
-include(CPack)
-
-# ==============================================================================
-# TARGET BUILD DEFINITIONS
-# ==============================================================================
 include(ConnectXO.cmake)
+
+
+
+
+
+

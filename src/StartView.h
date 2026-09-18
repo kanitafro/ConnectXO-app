@@ -10,6 +10,14 @@
 
 extern "C" int getThemeIndex();
 
+#ifndef CONNECTXO_UI_FONT
+#if defined(__APPLE__)
+#define CONNECTXO_UI_FONT "Helvetica Neue"
+#else
+#define CONNECTXO_UI_FONT "Segoe UI"
+#endif
+#endif
+
 enum class GameType
 {
     TicTacToe,
@@ -154,11 +162,6 @@ protected:
         td::ColorID rectBorderColor = rectColor; // THIS COLOR CHANGES WITH THEMES
         td::ColorID rectBorderHoverColor = accentColor;
         td::ColorID cardFillColor = bgColor;
-        if (themeIdx == ThemeIndex::Dark)
-        {
-            bgColor = td::ColorID::ObsidianGray;
-            cardFillColor = bgColor;  // Use background color for subtle fill
-        }
 
 
         // Fill background with gradient effect for visual interest
@@ -179,7 +182,7 @@ protected:
         }
         gui::Font titleFont;
         float fontSizePt = 40.0f;
-        titleFont.create("Segoe UI", fontSizePt, gui::Font::Style::Bold, gui::Font::Unit::Point);
+        titleFont.create(CONNECTXO_UI_FONT, fontSizePt, gui::Font::Style::Bold, gui::Font::Unit::Point);
         // Place the text in the top area, centered horizontally across the whole window and vertically
         // between the top of the window and the top of the selectable cards.
         const double topMargin = rect.height() * 0.08;
@@ -197,7 +200,7 @@ protected:
         // Label font for the captions inside each card (Segoe UI,20pt)
         gui::Font labelFont;
         const float labelFontSize = 20.0f;
-        labelFont.create("Segoe UI", labelFontSize, gui::Font::Style::Bold, gui::Font::Unit::Point);
+        labelFont.create(CONNECTXO_UI_FONT, labelFontSize, gui::Font::Style::Bold, gui::Font::Unit::Point);
 
         auto drawImageInRect = [&](const gui::Image& img, const gui::Rect& cardRect, const td::String& caption, double scale)
             {
